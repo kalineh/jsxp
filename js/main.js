@@ -40,6 +40,8 @@ var ambient = new THREE.AmbientLight(0x101010);
 
 var spotlight = new THREE.SpotLight(0xFFFFFFFF, 10.0, 1500.0);
 
+spotlight.position.y = 50;
+
 spotlight.shadowMapWidth = 1024;
 spotlight.shadowMapHeight = 1024;
 
@@ -47,16 +49,22 @@ spotlight.shadowCameraNear = 500;
 spotlight.shadowCameraFar = 4000;
 spotlight.shadowCameraFov = 30;
 
-spotlight.castShadow = ENABLE_SHADOWS;
-
 var light = new THREE.PointLight(0xFFFFFFFF, 1.0, 750.0);
 var sphere = make_sphere(5.0);
 
-//scene.add(ambient);
+scene.add(ambient);
 scene.add(light);
 scene.add(spotlight);
 scene.add(sphere);
 scene.add(camera);
+
+if ( ENABLE_SHADOWS )
+{
+	scene.traverse(function(object) { 
+		object.castShadow = true;
+		object.receiveShadow = true;
+	});
+}
 
 add_spiral(scene, 12, 50.0);
 

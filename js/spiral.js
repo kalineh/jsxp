@@ -7,9 +7,6 @@ var make_floor = function(size)
 
 	plane.rotation.set(Math.PI * 0.5, 0.0, 0.0);
 
-	plane.castShadow = ENABLE_SHADOWS;
-	plane.receiveShadow = ENABLE_SHADOWS;
-
 	return plane;
 };
 
@@ -18,9 +15,6 @@ var make_walls = function(size)
 	var geom = new THREE.CubeGeometry(size, size, size);
 	var material = new THREE.MeshLambertMaterial({ color: 0x7F9F9F, side: THREE.DoubleSide });
 	var cube = new THREE.Mesh(geom, material);
-
-	cube.castShadow = ENABLE_SHADOWS;
-	cube.receiveShadow = ENABLE_SHADOWS;
 
 	return cube;
 };
@@ -34,9 +28,6 @@ var make_sphere = function(size)
 	var geom = new THREE.SphereGeometry(radius, segments, rings);
 	var material = new THREE.MeshLambertMaterial({ color: 0xFFFFFFFF, side: THREE.DoubleSide });
 	var sphere = new THREE.Mesh(geom, material);
-
-	sphere.castShadow = ENABLE_SHADOWS;
-	sphere.receiveShadow = ENABLE_SHADOWS;
 
 	return sphere;
 };
