@@ -8,7 +8,18 @@ var ASPECT = WIDTH / HEIGHT;
 var NEAR = 0.1;
 var FAR = 10000.0;
 
+var ENABLE_SHADOWS = false;
+
 var renderer = new THREE.WebGLRenderer();
+var scene = new THREE.Scene();
+var axis = new THREE.AxisHelper(10.0);
+
+renderer.shadowMapEnabled = ENABLE_SHADOWS;
+
+scene.add(axis);
+
+renderer.setSize(WIDTH, HEIGHT);
+
 var camera = new THREE.PerspectiveCamera(
 	VIEW_ANGLE,
 	ASPECT,
@@ -16,45 +27,57 @@ var camera = new THREE.PerspectiveCamera(
 	FAR
 );
 
-var scene = new THREE.Scene();
+var controls = new THREE.OrbitControls(camera, renderer.domElement);
 
-scene.add(camera);
+camera.position.y = 100;
+camera.position.z = 200;
 
-renderer.setSize(WIDTH, HEIGHT);
+controls.update();
 
 document.body.appendChild(renderer.domElement);
 
-var radius = 2;
-var segments = 16;
-var rings = 16;
+var ambient = new THREE.AmbientLight(0x101010);
 
-var geom = new THREE.SphereGeometry(radius, segments, rings);
-var material = new THREE.MeshLambertMaterial({ color: 0xCC0000CC });
-var sphere = new THREE.Mesh(geom, material);
+var spotlight = new THREE.SpotLight(0xFFFFFFFF, 10.0, 1500.0);
 
-scene.add(sphere);
+spotlight.shadowMapWidth = 1024;
+spotlight.shadowMapHeight = 1024;
 
-var light = new THREE.PointLight(0xFFFFFFFF);
+spotlight.shadowCameraNear = 500;
+spotlight.shadowCameraFar = 4000;
+spotlight.shadowCameraFov = 30;
 
-light.position.x = 0;
-light.position.y = 50;
-light.position.z = 130;
+spotlight.castShadow = ENABLE_SHADOWS;
 
+var light = new THREE.PointLight(0xFFFFFFFF, 1.0, 750.0);
+var sphere = make_sphere(5.0);
+
+//scene.add(ambient);
 scene.add(light);
+scene.add(spotlight);
+scene.add(sphere);
+scene.add(camera);
 
-make_spiral(scene, 12, 100.0);
-make_floor(scene, 100.0);
+add_spiral(scene, 12, 50.0);
+
+var floor = make_floor(200.0);
+var walls = make_walls(2500.0);
+
+scene.add(floor);
+scene.add(walls);
 
 function render(time)
 {
-	//light.position.z += 91.0;
+	sphere.position.x = Math.cos(time * 0.001) * 20.0;
+	sphere.position.y = 25.0;
+	sphere.position.z = Math.sin(time * 0.001) * 20.0;
 
-	sphere.position.x = Math.sin(time * 0.01) * 20.0;
+	light.position = sphere.position;
 
-	camera.position.z = 300;
-	camera.position.y += 1;
+	//camera.position.z = 2;
+	//camera.position.y += 1;
 	
-	camera.lookAt(new THREE.Vector3(0,0,0));
+	//camera.lookAt(new THREE.Vector3(0,0,0));
 	//camera.updateProjectionMatrix();
 
 	renderer.render(scene, camera);
